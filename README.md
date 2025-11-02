@@ -17,7 +17,7 @@ A React-based web application for creating and managing dynamic HTML templates w
 ## Installation
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/dynamic-template-editor.git
+git clone https://github.com/yashr7/dynamic-template-editor.git
 
 # Navigate to project directory
 cd dynamic-template-editor
