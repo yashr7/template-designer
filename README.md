@@ -1,16 +1,49 @@
-# React + Vite
+# Dynamic Template Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based web application for creating and managing dynamic HTML templates with AI-powered field generation.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 📤 Upload HTML templates with placeholder syntax (`/*FieldName*/`)
+- 🔗 Interactive clickable placeholders
+- 📝 Define rules for each field:
+  - JavaScript logic
+  - AI prompts
+  - Static values
+- 🧪 Test rules in real-time
+- 👁️ Live preview of generated documents
+- 💾 Export generated JavaScript code
 
-## React Compiler
+## Installation
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/dynamic-template-editor.git
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# Navigate to project directory
+cd dynamic-template-editor
 
-## Expanding the ESLint configuration
+# Install dependencies
+npm install
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Run development server
+npm run dev
+```
+
+## Usage
+
+1. Upload an HTML template file with placeholders (e.g., `/*CompanyName*/`)
+2. Click on any placeholder to open the rule editor
+3. Define how each field should be generated
+4. Test your rules and preview the output
+5. Export the generated code
+
+## Tech Stack
+
+- React 19
+- Vite
+- Tailwind CSS 3
+- Lucide React (icons)
+
+## License
+
+MIT
