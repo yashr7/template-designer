@@ -2,6 +2,8 @@
 
 A React-based web application for creating and managing dynamic HTML templates with AI-powered field generation.
 
+![Dynamic Template Editor Screenshot](./staticData/ss.png)
+
 ## Features
 
 - 📤 Upload HTML templates with placeholder syntax (`/*FieldName*/`)
@@ -47,3 +49,4 @@ npm run dev
 ## License
 
 MIT
+
