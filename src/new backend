@@ -1,0 +1,113 @@
+from starlette.applications import Starlette
+from starlette.responses import JSONResponse
+from starlette.routing import Route
+from starlette.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
+import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# OpenAI key setup
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if OPENAI_API_KEY:
+    openai.api_key = OPENAI_API_KEY
+
+
+async def root(request):
+    return JSONResponse({
+        "message": "Dynamic Template Editor API (no pydantic)",
+        "version": "1.0",
+    })
+
+
+async def health(request):
+    return JSONResponse({
+        "status": "healthy",
+        "openai_configured": OPENAI_API_KEY is not None
+    })
+
+
+async def generate_rule(request):
+    try:
+        body = await request.json()
+        prompt = body.get("prompt")
+        field_name = body.get("field_name")
+
+        if not prompt or not field_name:
+            return JSONResponse({"success": False, "error": "prompt and field_name required"}, status_code=400)
+
+        system_prompt = """You are a JavaScript code generator for a template filling system.
+Generate ONLY the JavaScript function. No explanations, no markdown.
+Function name MUST be generate_{field_name}.
+Use fetchFromTHML(tagName) to get values.
+Handle errors gracefully.
+"""
+
+        user_prompt = f"Field name: {field_name}\nPrompt: {prompt}\nGenerate function now."
+
+        resp = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.3
+        )
+
+        generated_code = resp.choices[0].message.content.strip()
+
+        # cleanup markdown if exists
+        if generated_code.startswith("```"):
+            generated_code = generated_code.strip("`").split("\n", 1)[-1]
+
+        return JSONResponse({
+            "success": True,
+            "field_name": field_name,
+            "generated_code": generated_code
+        })
+
+    except Exception as e:
+        return JSONResponse({"success": False, "error": str(e)}, status_code=500)
+
+
+async def test_rule(request):
+    try:
+        body = await request.json()
+        code = body.get("code")
+        field_name = body.get("field_name")
+
+        if not code:
+            return JSONResponse({"success": False, "error": "code required"}, status_code=400)
+
+        if f"generate_{field_name}" not in code:
+            return JSONResponse({"success": False, "error": f"Function generate_{field_name} missing"}, status_code=400)
+
+        return JSONResponse({"success": True, "result": "Code structure valid. Execute in frontend."})
+
+    except Exception as e:
+        return JSONResponse({"success": False, "error": str(e)}, status_code=500)
+
+
+routes = [
+    Route("/", root),
+    Route("/health", health),
+    Route("/api/rules/generate", generate_rule, methods=["POST"]),
+    Route("/api/rules/test", test_rule, methods=["POST"]),
+]
+
+middleware = [
+    Middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+]
+
+app = Starlette(routes=routes, middleware=middleware)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
